@@ -30,47 +30,47 @@ namespace ChallongeMatchViewer
 
         private static string TournamentKey { get; set; }
 
-        static void Main(string[] args)
-        {
-            var tournaments = ChallongeApiWrapper.GetTournamentList(CHALLONGE_USERNAME, CHALLONGE_APIKEY, CHALLONGE_SUBDOMAIN);
+        //static void OldMain(string[] args)
+        //{
+        //    var tournaments = ChallongeApiWrapper.GetTournamentList(CHALLONGE_USERNAME, CHALLONGE_APIKEY, CHALLONGE_SUBDOMAIN);
 
-            CsvWriter.WriteLine("tournament-list.csv", "Name of Event, Challonge URL, Participants");
-            foreach (var tournament in tournaments)
-            {
-                var tdata = ChallongeApiWrapper.GetTournament(tournament.ApiUrl, CHALLONGE_USERNAME, CHALLONGE_APIKEY);
-                var name = tdata.Name;
-                var url = tdata.UrlAddress();
-                var numParticipants = tdata.Participants.Count;
+        //    CsvWriter.WriteLine("tournament-list.csv", "Name of Event, Challonge URL, Participants");
+        //    foreach (var tournament in tournaments)
+        //    {
+        //        var tdata = ChallongeApiWrapper.GetTournament(tournament.ApiUrl, CHALLONGE_USERNAME, CHALLONGE_APIKEY);
+        //        var name = tdata.Name;
+        //        var url = tdata.UrlAddress();
+        //        var numParticipants = tdata.Participants.Count;
 
-                CsvWriter.WriteLine("tournament-list.csv", "{0}, {1}, {2}", name, url, numParticipants);
+        //        CsvWriter.WriteLine("tournament-list.csv", "{0}, {1}, {2}", name, url, numParticipants);
 
-                var filename = string.Format("{0}-participants.csv", tdata.ApiUrl);
-                CsvWriter.WriteLine(filename, "Tournament Name, Participant Name");
+        //        var filename = string.Format("{0}-participants.csv", tdata.ApiUrl);
+        //        CsvWriter.WriteLine(filename, "Tournament Name, Participant Name");
 
-                foreach (var particiapant in tdata.Participants)
-                {
-                    var participantName = particiapant.Name;
+        //        foreach (var particiapant in tdata.Participants)
+        //        {
+        //            var participantName = particiapant.Name;
 
-                    CsvWriter.WriteLine(filename, "{0}, {1}", name, participantName);
-                }
+        //            CsvWriter.WriteLine(filename, "{0}, {1}", name, participantName);
+        //        }
 
-                filename = string.Format("{0}-results.csv", tdata.ApiUrl);
-                CsvWriter.WriteLine(filename, "Tournament Name, Winner, Loser");
+        //        filename = string.Format("{0}-results.csv", tdata.ApiUrl);
+        //        CsvWriter.WriteLine(filename, "Tournament Name, Winner, Loser");
 
-                foreach (var match in tdata.CompleteMatches)
-                {
-                    var p1name = match.Player1 == null ? "Bye" : match.Player1.Name;
-                    var p2name = match.Player2 == null ? "Bye" : match.Player2.Name;
+        //        foreach (var match in tdata.CompleteMatches)
+        //        {
+        //            var p1name = match.Player1 == null ? "Bye" : match.Player1.Name;
+        //            var p2name = match.Player2 == null ? "Bye" : match.Player2.Name;
 
-                    if (match.WinnerId == match.Player1Id)
-                        CsvWriter.WriteLine(filename, "{0}, {1}, {2}", name, p1name, p2name);
-                    else
-                        CsvWriter.WriteLine(filename, "{0}, {1}, {2}", name, p2name, p1name);
-                }
-            }
-        }
+        //            if (match.WinnerId == match.Player1Id)
+        //                CsvWriter.WriteLine(filename, "{0}, {1}, {2}", name, p1name, p2name);
+        //            else
+        //                CsvWriter.WriteLine(filename, "{0}, {1}, {2}", name, p2name, p1name);
+        //        }
+        //    }
+        //}
 
-        private static void OldMain(string[] args)
+        private static void Main(string[] args)
         {
             TournamentKey = ConsoleInputProvider.GetTournamentKey();
             Console.WriteLine();
@@ -171,11 +171,15 @@ namespace ChallongeMatchViewer
         public static void AssignStations(ChallongeTournament tournament)
         {
             // First free up stations that are not assign an OPEN match
-            foreach (var match in tournament.StationManager.Stations.Values)
+            var matches = tournament.StationManager.Stations.Values.ToList();
+            foreach (var match in matches)
             {
-                if (!tournament.OpenMatches.Any(m => m.Id == match.Id))
+                if (match != null)
                 {
-                    tournament.StationManager.UnassignMatch(match);
+                    if (!tournament.OpenMatches.Any(m => m.Id == match.Id))
+                    {
+                        tournament.StationManager.UnassignMatch(match);
+                    }
                 }
             }
             
