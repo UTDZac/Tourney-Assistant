@@ -260,7 +260,7 @@ namespace ChallongeMatchViewer
 
                 if (DateTime.Now.Second % 2 == 0)
                 {
-                    if (match.CreatedAt.AddMinutes(30) <= DateTime.Now)
+                    if (match.CreatedAt.AddMinutes(20) <= DateTime.Now)
                     {
                         //Console.ForegroundColor = ConsoleColor.Black;
                         Console.BackgroundColor = ConsoleColor.DarkRed;
@@ -282,32 +282,32 @@ namespace ChallongeMatchViewer
             }
             Console.WriteLine();
 
-            Console.WriteLine("Upcoming Matches");
-            Console.WriteLine(string.Empty.PadRight(header.Length + 10, '-'));
-            foreach (var match in tournament.PendingMatches.OrderBy(m => m.Player1 != null && m.Player2 != null ? "1" : "2").ThenBy(m => m.Player1 != null ? m.Player1.Name : m.Player2.Name))
-            {
-                if (match.Player1 != null && match.Player2 != null)
-                {
-                    Console.WriteLine(string.Format("{0} <-> {1}",
-                        match.Player1.Name.PadRight(maxNameLength),
-                        match.Player2.Name.PadRight(maxNameLength)
-                    ));
-                }
-                else
-                {
-                    var player = match.Player1 != null ? match.Player1 : match.Player2;
-                    var matchWaitingOn = tournament.OpenMatches.Single(c => c.Id == (match.Player1 != null ? match.Player2PrevMatchId : match.Player1PrevMatchId));
-                    var winnerOrLoser = match.Round < 0 && matchWaitingOn.Round > 0 ? "Loser" : "Winner";
+            //Console.WriteLine("Upcoming Matches");
+            //Console.WriteLine(string.Empty.PadRight(header.Length + 10, '-'));
+            //foreach (var match in tournament.PendingMatches.OrderBy(m => m.Player1 != null && m.Player2 != null ? "1" : "2").ThenBy(m => m.Player1 != null ? m.Player1.Name : m.Player2.Name))
+            //{
+            //    if (match.Player1 != null && match.Player2 != null)
+            //    {
+            //        Console.WriteLine(string.Format("{0} <-> {1}",
+            //            match.Player1.Name.PadRight(maxNameLength),
+            //            match.Player2.Name.PadRight(maxNameLength)
+            //        ));
+            //    }
+            //    else
+            //    {
+            //        var player = match.Player1 != null ? match.Player1 : match.Player2;
+            //        var matchWaitingOn = tournament.OpenMatches.Single(c => c.Id == (match.Player1 != null ? match.Player2PrevMatchId : match.Player1PrevMatchId));
+            //        var winnerOrLoser = match.Round < 0 && matchWaitingOn.Round > 0 ? "Loser" : "Winner";
 
 
-                    Console.WriteLine(string.Format("{0} <-> {1} of Match {2}",
-                        player.Name.PadRight(maxNameLength),
-                        winnerOrLoser,
-                        matchWaitingOn.Identifier));
-                }
+            //        Console.WriteLine(string.Format("{0} <-> {1} of Match {2}",
+            //            player.Name.PadRight(maxNameLength),
+            //            winnerOrLoser,
+            //            matchWaitingOn.Identifier));
+            //    }
 
-            }
-            Console.WriteLine();
+            //}
+            //Console.WriteLine();
 
             var timeDiff = UPDATE_INTERVAL_SEC - (DateTime.Now - startTime).Seconds % UPDATE_INTERVAL_SEC;
             Console.WriteLine(string.Format("Next update in... {0} second{1}.", timeDiff.ToString().PadLeft(2, '0'), timeDiff == 1 ? string.Empty : "s"));
